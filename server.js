@@ -68,8 +68,8 @@ async function getSheets() {
   return google.sheets({ version: 'v4', auth });
 }
 
-function validApartment(apt) {
-  return Object.prototype.hasOwnProperty.call(apartments, apt);
+function validProperty(propertyId) {
+  return Object.prototype.hasOwnProperty.call(apartments, propertyId);
 }
 
 function expiryDate(days) {
@@ -82,80 +82,75 @@ app.get('/api/health', (req, res) => {
   res.json({ ok: true, service: 'wifi-registration-api' });
 });
 
-app.get('/api/apartment/:apt', (req, res) => {
-  const apt = req.params.apt;
-  if (!validApartment(apt)) return res.status(404).json({ error: 'Apartment not found.' });
-  res.json({ apartment: apt, ...apartments[apt] });
-});
-
 app.post('/api/register', async (req, res) => {
   try {
-    const { apartment, email, deviceName } = req.body;
+    const { propertyId, email, deviceName } = req.body;
 
-    if (!validApartment(apartment)) {
-      return res.status(400).json({ error: 'Invalid apartment.' });
+    if (!validProperty(propertyId)) {
+      return res.status(400).json({ error: 'Please select a valid property.' });
     }
 
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       return res.status(400).json({ error: 'Please enter a valid email address.' });
     }
 
+    const config = apartments[propertyId];
+
+    if (!config.networkName || !config.wifiPassword) {
+      return res.status(500).json({
+        error: 'WiFi credentials are not configured for this property.'
+      });
+    }
+
     const device = String(deviceName || 'Unknown device').trim().slice(0, 100);
-    const config = apartments[apartment];
     const registeredAt = new Date().toISOString();
     const expires = expiryDate(config.sessionExpiryDays);
 
     const sheets = await getSheets();
+
     await sheets.spreadsheets.values.append({
       spreadsheetId: SPREADSHEET_ID,
       range: `'${config.sheetName}'!A:E`,
       valueInputOption: 'USER_ENTERED',
       requestBody: {
-        values: [[email.trim(), device, registeredAt, expires, 'Active']]
+        values: [[
+          email.trim(),
+          device,
+          registeredAt,
+          expires,
+          'Active'
+        ]]
       }
     });
 
     res.json({
       success: true,
-      apartment,
+      propertyId,
+      propertyName: config.name,
       email: email.trim(),
       deviceName: device,
       networkName: config.networkName,
       wifiPassword: config.wifiPassword,
       expires
     });
+
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Registration could not be completed.', details: err.message });
+
+    res.status(500).json({
+      error: 'Registration could not be completed.',
+      details: err.message
+    });
   }
 });
 
-app.get('/api/admin/:apt/dashboard', async (req, res) => {
-  try {
-    const apt = req.params.apt;
-    if (!validApartment(apt)) return res.status(404).json({ error: 'Apartment not found.' });
-
-    const sheets = await getSheets();
-    const result = await sheets.spreadsheets.values.get({
-      spreadsheetId: SPREADSHEET_ID,
-      range: `'${apartments[apt].sheetName}'!A:E`
-    });
-
-    const rows = result.data.values || [];
-    res.json({
-      apartment: apt,
-      registrations: rows.slice(1).map(r => ({
-        email: r[0] || '',
-        deviceName: r[1] || '',
-        registrationDate: r[2] || '',
-        expires: r[3] || '',
-        status: r[4] || ''
-      }))
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Could not load dashboard.', details: err.message });
-  }
+app.get('/api/properties', (req, res) => {
+  res.json({
+    properties: Object.entries(apartments).map(([id, property]) => ({
+      id,
+      name: property.name
+    }))
+  });
 });
 
 app.listen(PORT, () => console.log(`WiFi registration server listening on port ${PORT}`));
