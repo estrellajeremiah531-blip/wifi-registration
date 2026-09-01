@@ -12,11 +12,45 @@ app.use(express.static(__dirname));
 const SPREADSHEET_ID = process.env.GOOGLE_SPREADSHEET_ID;
 
 const apartments = {
-  'apt-101': { networkName: 'Apt101-Guest', wifiPassword: 'Welcome101!', sessionExpiryDays: 7 },
-  'apt-102': { networkName: 'Apt102-Guest', wifiPassword: 'Welcome102!', sessionExpiryDays: 7 },
-  'apt-103': { networkName: 'Apt103-Guest', wifiPassword: 'Welcome103!', sessionExpiryDays: 7 },
-  'apt-104': { networkName: 'Apt104-Guest', wifiPassword: 'Welcome104!', sessionExpiryDays: 7 },
-  'apt-105': { networkName: 'Apt105-Guest', wifiPassword: 'Welcome105!', sessionExpiryDays: 7 }
+  'union-terrace': {
+    name: 'Union Terrace',
+    sheetName: 'Union Terrace',
+    networkName: process.env.UNION_TERRACE_NETWORK,
+    wifiPassword: process.env.UNION_TERRACE_PASSWORD,
+    sessionExpiryDays: 7
+  },
+
+  'king-st': {
+    name: 'King ST',
+    sheetName: 'King ST',
+    networkName: process.env.KING_ST_NETWORK,
+    wifiPassword: process.env.KING_ST_PASSWORD,
+    sessionExpiryDays: 7
+  },
+
+  'skene-st': {
+    name: 'Skene ST',
+    sheetName: 'Skene ST',
+    networkName: process.env.SKENE_ST_NETWORK,
+    wifiPassword: process.env.SKENE_ST_PASSWORD,
+    sessionExpiryDays: 7
+  },
+
+  'fonthill-terrace': {
+    name: 'Fonthill Terrace',
+    sheetName: 'Fonthill Terrace',
+    networkName: process.env.FONTHILL_TERRACE_NETWORK,
+    wifiPassword: process.env.FONTHILL_TERRACE_PASSWORD,
+    sessionExpiryDays: 7
+  },
+
+  'upperkirkgate': {
+    name: 'Upperkirkgate',
+    sheetName: 'Upperkirkgate',
+    networkName: process.env.UPPERKIRKGATE_NETWORK,
+    wifiPassword: process.env.UPPERKIRKGATE_PASSWORD,
+    sessionExpiryDays: 7
+  }
 };
 
 function getCredentials() {
@@ -74,7 +108,7 @@ app.post('/api/register', async (req, res) => {
     const sheets = await getSheets();
     await sheets.spreadsheets.values.append({
       spreadsheetId: SPREADSHEET_ID,
-      range: `${apartment}!A:E`,
+      range: `'${config.sheetName}'!A:E`,
       valueInputOption: 'USER_ENTERED',
       requestBody: {
         values: [[email.trim(), device, registeredAt, expires, 'Active']]
@@ -104,7 +138,7 @@ app.get('/api/admin/:apt/dashboard', async (req, res) => {
     const sheets = await getSheets();
     const result = await sheets.spreadsheets.values.get({
       spreadsheetId: SPREADSHEET_ID,
-      range: `${apt}!A:E`
+      range: `'${apartments[apt].sheetName}'!A:E`
     });
 
     const rows = result.data.values || [];
