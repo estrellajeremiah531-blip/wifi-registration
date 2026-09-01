@@ -8,7 +8,8 @@
   *{box-sizing:border-box} body{margin:0;font-family:Inter,Arial,sans-serif;background:linear-gradient(135deg,#eef6ff,#f7f4ff);color:#172033;min-height:100vh}
   .wrap{max-width:720px;margin:auto;padding:32px 18px}.card{background:#fff;border-radius:24px;padding:30px;box-shadow:0 15px 45px rgba(30,50,90,.12)}
   h1{margin:0 0 8px;font-size:30px}.muted{color:#687386}.badge{display:inline-block;padding:7px 12px;border-radius:999px;background:#eef4ff;color:#3565c8;font-weight:700;font-size:13px;margin-bottom:16px}
-  label{display:block;font-weight:700;margin:18px 0 7px}input{width:100%;padding:14px;border:1px solid #d8deea;border-radius:12px;font-size:16px}
+  label{display:block;font-weight:700;margin:18px 0 7px}
+input,select{width:100%;padding:14px;border:1px solid #d8deea;border-radius:12px;font-size:16px}
   button{width:100%;border:0;border-radius:12px;padding:15px;margin-top:22px;background:#2f6fed;color:white;font-size:16px;font-weight:800;cursor:pointer}
   button:disabled{opacity:.6}.error{color:#b42318;background:#fff0ef;padding:12px;border-radius:10px;margin-top:15px;display:none}
   .success{display:none}.credentials{margin-top:20px;background:#f4f8ff;border-radius:16px;padding:20px}.cred{font-size:20px;font-weight:800;margin:8px 0;word-break:break-word}
@@ -21,12 +22,38 @@
   <div class="badge" id="aptBadge">Apartment WiFi</div>
   <h1>Register for WiFi</h1>
   <p class="muted">Enter your email before receiving the WiFi credentials.</p>
-  <form id="form">
-    <label for="email">Email address</label>
-    <input id="email" type="email" required placeholder="you@example.com">
-    <label for="device">Device name</label>
-    <input id="device" type="text" maxlength="100" placeholder="e.g. Maia's iPhone">
-    <button id="submit">Get WiFi Credentials</button>
+    <form id="form">
+
+  <label for="property">Which property are you staying at?</label>
+  <select id="property" required>
+    <option value="">Select your property</option>
+    <option value="union-terrace">Union Terrace</option>
+    <option value="king-st">King ST</option>
+    <option value="skene-st">Skene ST</option>
+    <option value="fonthill-terrace">Fonthill Terrace</option>
+    <option value="upperkirkgate">Upperkirkgate</option>
+  </select>
+
+  <label for="email">Email address</label>
+  <input
+    id="email"
+    type="email"
+    required
+    placeholder="you@example.com"
+  >
+
+  <label for="device">Device name</label>
+  <input
+    id="device"
+    type="text"
+    maxlength="100"
+    placeholder="e.g. My iPhone"
+  >
+
+  <button id="submit" type="submit">
+    Get WiFi Credentials
+  </button>
+
   </form>
   <div class="error" id="error"></div>
   <div class="success" id="success">
@@ -42,48 +69,65 @@
 </div></div>
 <script>
 const API_BASE = 'https://wifi-registration-api.onrender.com';
-const params = new URLSearchParams(location.search);
-const apartment = params.get('apt') || 'apt-101';
 
-document.getElementById('aptBadge').textContent = apartment.toUpperCase();
-
-async function loadApartment(){
-  try{
-    const r = await fetch(`${API_BASE}/api/apartment/${encodeURIComponent(apartment)}`);
-    if(!r.ok) throw new Error();
-  }catch(e){
-    // The form can still render; registration will show the backend error.
-  }
-  const portal = `${location.origin}${location.pathname}?apt=${encodeURIComponent(apartment)}`;
-  document.getElementById('qrImg').src =
-    `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(portal)}`;
-  document.getElementById('qr').style.display = 'block';
-}
-loadApartment();
-
-document.getElementById('form').addEventListener('submit', async (e)=>{
+document.getElementById('form').addEventListener('submit', async (e) => {
   e.preventDefault();
-  const button=document.getElementById('submit'), error=document.getElementById('error'), success=document.getElementById('success');
-  error.style.display='none'; success.style.display='none'; button.disabled=true; button.textContent='Registering...';
-  try{
-    const r=await fetch(`${API_BASE}/api/register`,{
-      method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        apartment,
-        email:document.getElementById('email').value,
-        deviceName:document.getElementById('device').value
+
+  const button = document.getElementById('submit');
+  const error = document.getElementById('error');
+  const success = document.getElementById('success');
+
+  const propertyId = document.getElementById('property').value;
+  const email = document.getElementById('email').value;
+  const deviceName = document.getElementById('device').value;
+
+  error.style.display = 'none';
+  success.style.display = 'none';
+
+  if (!propertyId) {
+    error.textContent = 'Please select the property you are staying at.';
+    error.style.display = 'block';
+    return;
+  }
+
+  button.disabled = true;
+  button.textContent = 'Registering...';
+
+  try {
+    const r = await fetch(`${API_BASE}/api/register`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        propertyId,
+        email,
+        deviceName
       })
     });
-    const data=await r.json();
-    if(!r.ok) throw new Error(data.error || 'Registration failed.');
-    document.getElementById('network').textContent=data.networkName;
-    document.getElementById('password').textContent=data.wifiPassword;
-    document.getElementById('expires').textContent=new Date(data.expires).toLocaleString();
-    success.style.display='block';
-    document.getElementById('form').style.display='none';
-  }catch(err){
-    error.textContent=err.message; error.style.display='block';
-  }finally{button.disabled=false;button.textContent='Get WiFi Credentials'}
+
+    const data = await r.json();
+
+    if (!r.ok) {
+      throw new Error(data.error || 'Registration failed.');
+    }
+
+    document.getElementById('network').textContent = data.networkName;
+    document.getElementById('password').textContent = data.wifiPassword;
+    document.getElementById('expires').textContent =
+      new Date(data.expires).toLocaleString();
+
+    success.style.display = 'block';
+    document.getElementById('form').style.display = 'none';
+
+  } catch (err) {
+    error.textContent = err.message;
+    error.style.display = 'block';
+
+  } finally {
+    button.disabled = false;
+    button.textContent = 'Get WiFi Credentials';
+  }
 });
 </script>
 </body>
