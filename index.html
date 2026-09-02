@@ -3,90 +3,372 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+
 <title>Apartment WiFi Registration</title>
+
+<!-- Website icon -->
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="apple-touch-icon" href="favicon.svg">
+
 <style>
-  *{box-sizing:border-box} body{margin:0;font-family:Inter,Arial,sans-serif;background:linear-gradient(135deg,#eef6ff,#f7f4ff);color:#172033;min-height:100vh}
-  .wrap{max-width:720px;margin:auto;padding:32px 18px}.card{background:#fff;border-radius:24px;padding:30px;box-shadow:0 15px 45px rgba(30,50,90,.12)}
-  h1{margin:0 0 8px;font-size:30px}.muted{color:#687386}.badge{display:inline-block;padding:7px 12px;border-radius:999px;background:#eef4ff;color:#3565c8;font-weight:700;font-size:13px;margin-bottom:16px}
-  label{display:block;font-weight:700;margin:18px 0 7px}
-input,select{width:100%;padding:14px;border:1px solid #d8deea;border-radius:12px;font-size:16px}
-  button{width:100%;border:0;border-radius:12px;padding:15px;margin-top:22px;background:#2f6fed;color:white;font-size:16px;font-weight:800;cursor:pointer}
-  button:disabled{opacity:.6}.error{color:#b42318;background:#fff0ef;padding:12px;border-radius:10px;margin-top:15px;display:none}
-  .success{display:none}.credentials{margin-top:20px;background:#f4f8ff;border-radius:16px;padding:20px}.cred{font-size:20px;font-weight:800;margin:8px 0;word-break:break-word}
-  .qr{display:none;text-align:center;margin-top:24px}.qr img{max-width:220px;border-radius:12px}
-  .small{font-size:13px}.footer{margin-top:18px;text-align:center;color:#778096;font-size:13px}
+  *{box-sizing:border-box}
+
+  body{
+    margin:0;
+    font-family:Inter,Arial,sans-serif;
+    background:linear-gradient(135deg,#eef6ff,#f7f4ff);
+    color:#172033;
+    min-height:100vh
+  }
+
+  .wrap{
+    max-width:720px;
+    margin:auto;
+    padding:32px 18px
+  }
+
+  .card{
+    background:#fff;
+    border-radius:24px;
+    padding:30px;
+    box-shadow:0 15px 45px rgba(30,50,90,.12)
+  }
+
+  h1{
+    margin:0 0 8px;
+    font-size:30px
+  }
+
+  .muted{
+    color:#687386
+  }
+
+  .badge{
+    display:inline-block;
+    padding:7px 12px;
+    border-radius:999px;
+    background:#eef4ff;
+    color:#3565c8;
+    font-weight:700;
+    font-size:13px;
+    margin-bottom:16px
+  }
+
+  label{
+    display:block;
+    font-weight:700;
+    margin:18px 0 7px
+  }
+
+  input,select{
+    width:100%;
+    padding:14px;
+    border:1px solid #d8deea;
+    border-radius:12px;
+    font-size:16px
+  }
+
+  button{
+    width:100%;
+    border:0;
+    border-radius:12px;
+    padding:15px;
+    margin-top:22px;
+    background:#2f6fed;
+    color:white;
+    font-size:16px;
+    font-weight:800;
+    cursor:pointer
+  }
+
+  button:disabled{
+    opacity:.6
+  }
+
+  .error{
+    color:#b42318;
+    background:#fff0ef;
+    padding:12px;
+    border-radius:10px;
+    margin-top:15px;
+    display:none
+  }
+
+  .success{
+    display:none
+  }
+
+  .credentials{
+    margin-top:20px;
+    background:#f4f8ff;
+    border-radius:16px;
+    padding:20px
+  }
+
+  .cred{
+    font-size:20px;
+    font-weight:800;
+    margin:8px 0;
+    word-break:break-word
+  }
+
+  .small{
+    font-size:13px
+  }
+
+  .footer{
+    margin-top:18px;
+    text-align:center;
+    color:#778096;
+    font-size:13px
+  }
+
+  .privacy-box{
+    margin-top:18px;
+    padding:15px;
+    background:#f8faff;
+    border:1px solid #e2e8f3;
+    border-radius:14px
+  }
+
+  .privacy-box p{
+    margin:0;
+    font-size:13px;
+    line-height:1.55;
+    color:#687386
+  }
+
+  .privacy-link{
+    color:#2f6fed;
+    font-weight:700;
+    text-decoration:none
+  }
+
+  .privacy-link:hover{
+    text-decoration:underline
+  }
+
+  .marketing-box{
+    margin-top:18px;
+    padding:16px;
+    background:#fafbfe;
+    border:1px solid #e0e5ef;
+    border-radius:14px
+  }
+
+  .marketing-label{
+    display:flex;
+    align-items:flex-start;
+    gap:11px;
+    margin:0;
+    font-weight:400;
+    cursor:pointer
+  }
+
+  .marketing-label input{
+    width:18px;
+    height:18px;
+    margin:2px 0 0;
+    flex:none
+  }
+
+  .marketing-title{
+    font-weight:700;
+    color:#172033
+  }
+
+  .marketing-note{
+    margin:7px 0 0 29px;
+    font-size:12px;
+    line-height:1.5;
+    color:#687386
+  }
+
+  .qr{
+    display:none;
+    text-align:center;
+    margin-top:24px
+  }
+
+  .qr img{
+    max-width:220px;
+    border-radius:12px
+  }
 </style>
 </head>
+
 <body>
-<div class="wrap"><div class="card">
-  <div class="badge" id="aptBadge">Apartment WiFi</div>
-  <h1>Register for WiFi</h1>
-  <p class="muted">Enter your email before receiving the WiFi credentials.</p>
+
+<div class="wrap">
+  <div class="card">
+
+    <div class="badge">Apartment WiFi</div>
+
+    <h1>Register for WiFi</h1>
+
+    <p class="muted">
+      Enter your email before receiving the WiFi credentials.
+    </p>
+
     <form id="form">
 
-  <label for="property">Which property are you staying at?</label>
-  <select id="property" required>
-    <option value="">Select your property</option>
-    <option value="union-terrace">Union Terrace</option>
-    <option value="king-st">King ST</option>
-    <option value="skene-st">Skene ST</option>
-    <option value="fonthill-terrace">Fonthill Terrace</option>
-    <option value="upperkirkgate">Upperkirkgate</option>
-  </select>
+      <label for="property">
+        Which property are you staying at?
+      </label>
 
-  <label for="email">Email address</label>
-  <input
-    id="email"
-    type="email"
-    required
-    placeholder="you@example.com"
-  >
+      <select id="property" required>
+        <option value="">Select your property</option>
+        <option value="union-terrace">Union Terrace</option>
+        <option value="king-st">King ST</option>
+        <option value="skene-st">Skene ST</option>
+        <option value="fonthill-terrace">Fonthill Terrace</option>
+        <option value="upperkirkgate">Upperkirkgate</option>
+      </select>
 
-  <label for="device">Device name</label>
-  <input
-    id="device"
-    type="text"
-    maxlength="100"
-    placeholder="e.g. My iPhone"
-  >
+      <label for="email">
+        Email address
+      </label>
 
-  <button id="submit" type="submit">
-    Get WiFi Credentials
-  </button>
+      <input
+        id="email"
+        type="email"
+        required
+        placeholder="you@example.com"
+        autocomplete="email"
+      >
 
-  </form>
-  <div class="error" id="error"></div>
-  <div class="success" id="success">
-    <div class="credentials">
-      <div class="muted small">Network name</div><div class="cred" id="network"></div>
-      <div class="muted small">WiFi password</div><div class="cred" id="password"></div>
-      <div class="muted small">Access expires</div><div class="cred" id="expires"></div>
+      <div class="privacy-box">
+        <p>
+          Your email address is required to access our complimentary guest
+          WiFi. We collect this information to maintain a record of guest
+          WiFi access and to help monitor the security and appropriate use
+          of our network. Your information is handled in accordance with
+          our <a class="privacy-link" href="privacy.html">Privacy Notice</a>.
+        </p>
+      </div>
+
+      <div class="marketing-box">
+
+        <label class="marketing-label">
+          <input
+            id="marketing"
+            type="checkbox"
+          >
+
+          <span>
+            <span class="marketing-title">
+              Would you like to hear from us about future stays and
+              direct-booking offers?
+            </span>
+          </span>
+        </label>
+
+        <p class="marketing-note">
+          Yes, I'd like to receive occasional marketing emails about
+          future stays, availability, direct-booking offers, special
+          rates and promotions. Marketing is optional and is not required
+          to access guest WiFi.
+        </p>
+
+      </div>
+
+      <label for="device">
+        Device name
+      </label>
+
+      <input
+        id="device"
+        type="text"
+        maxlength="100"
+        placeholder="e.g. My iPhone"
+      >
+
+      <button id="submit" type="submit">
+        Get WiFi Credentials
+      </button>
+
+    </form>
+
+    <div class="error" id="error"></div>
+
+    <div class="success" id="success">
+
+      <div class="credentials">
+
+        <div class="muted small">
+          Network name
+        </div>
+
+        <div class="cred" id="network"></div>
+
+        <div class="muted small">
+          WiFi password
+        </div>
+
+        <div class="cred" id="password"></div>
+
+        <div class="muted small">
+          Access expires
+        </div>
+
+        <div class="cred" id="expires"></div>
+
+      </div>
+
+      <p class="muted small">
+        Your registration has been recorded.
+      </p>
+
     </div>
-    <p class="muted small">Your registration has been recorded.</p>
+
+    <div class="qr" id="qr">
+      <p class="muted">Share this portal</p>
+      <img id="qrImg" alt="QR code">
+    </div>
+
+    <div class="footer">
+      WiFi Registration Portal
+      <br>
+      <a class="privacy-link" href="privacy.html">Privacy Notice</a>
+    </div>
+
   </div>
-  <div class="qr" id="qr"><p class="muted">Share this portal</p><img id="qrImg" alt="QR code"></div>
-  <div class="footer">WiFi Registration Portal</div>
-</div></div>
+</div>
+
 <script>
+
 const API_BASE = 'https://wifi-registration-api.onrender.com';
 
 document.getElementById('form').addEventListener('submit', async (e) => {
+
   e.preventDefault();
 
   const button = document.getElementById('submit');
   const error = document.getElementById('error');
   const success = document.getElementById('success');
 
-  const propertyId = document.getElementById('property').value;
-  const email = document.getElementById('email').value;
-  const deviceName = document.getElementById('device').value;
+  const propertyId =
+    document.getElementById('property').value;
+
+  const email =
+    document.getElementById('email').value;
+
+  const deviceName =
+    document.getElementById('device').value;
+
+  const marketing =
+    document.getElementById('marketing').checked;
 
   error.style.display = 'none';
   success.style.display = 'none';
 
   if (!propertyId) {
-    error.textContent = 'Please select the property you are staying at.';
+
+    error.textContent =
+      'Please select the property you are staying at.';
+
     error.style.display = 'block';
+
     return;
   }
 
@@ -94,41 +376,61 @@ document.getElementById('form').addEventListener('submit', async (e) => {
   button.textContent = 'Registering...';
 
   try {
+
     const r = await fetch(`${API_BASE}/api/register`, {
+
       method: 'POST',
+
       headers: {
         'Content-Type': 'application/json'
       },
+
       body: JSON.stringify({
         propertyId,
         email,
-        deviceName
+        deviceName,
+        marketing
       })
+
     });
 
     const data = await r.json();
 
     if (!r.ok) {
-      throw new Error(data.error || 'Registration failed.');
+      throw new Error(
+        data.error || 'Registration failed.'
+      );
     }
 
-    document.getElementById('network').textContent = data.networkName;
-    document.getElementById('password').textContent = data.wifiPassword;
+    document.getElementById('network').textContent =
+      data.networkName;
+
+    document.getElementById('password').textContent =
+      data.wifiPassword;
+
     document.getElementById('expires').textContent =
       new Date(data.expires).toLocaleString();
 
     success.style.display = 'block';
+
     document.getElementById('form').style.display = 'none';
 
   } catch (err) {
+
     error.textContent = err.message;
+
     error.style.display = 'block';
 
   } finally {
+
     button.disabled = false;
     button.textContent = 'Get WiFi Credentials';
+
   }
+
 });
+
 </script>
+
 </body>
 </html>
