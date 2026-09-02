@@ -57,6 +57,7 @@ function getCredentials() {
   if (!process.env.GOOGLE_CREDENTIALS) {
     throw new Error('GOOGLE_CREDENTIALS is not set.');
   }
+
   return JSON.parse(process.env.GOOGLE_CREDENTIALS);
 }
 
@@ -65,7 +66,11 @@ async function getSheets() {
     credentials: getCredentials(),
     scopes: ['https://www.googleapis.com/auth/spreadsheets']
   });
-  return google.sheets({ version: 'v4', auth });
+
+  return google.sheets({
+    version: 'v4',
+    auth
+  });
 }
 
 function validProperty(propertyId) {
@@ -79,19 +84,31 @@ function expiryDate(days) {
 }
 
 app.get('/api/health', (req, res) => {
-  res.json({ ok: true, service: 'wifi-registration-api' });
+  res.json({
+    ok: true,
+    service: 'wifi-registration-api'
+  });
 });
 
 app.post('/api/register', async (req, res) => {
   try {
-    const { propertyId, email, deviceName } = req.body;
+    const {
+      propertyId,
+      email,
+      deviceName,
+      marketing
+    } = req.body;
 
     if (!validProperty(propertyId)) {
-      return res.status(400).json({ error: 'Please select a valid property.' });
+      return res.status(400).json({
+        error: 'Please select a valid property.'
+      });
     }
 
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      return res.status(400).json({ error: 'Please enter a valid email address.' });
+      return res.status(400).json({
+        error: 'Please enter a valid email address.'
+      });
     }
 
     const config = apartments[propertyId];
@@ -102,15 +119,21 @@ app.post('/api/register', async (req, res) => {
       });
     }
 
-    const device = String(deviceName || 'Unknown device').trim().slice(0, 100);
+    const device = String(deviceName || 'Unknown device')
+      .trim()
+      .slice(0, 100);
+
     const registeredAt = new Date().toISOString();
     const expires = expiryDate(config.sessionExpiryDays);
+
+    // Convert the checkbox value into a simple Yes/No value.
+    const marketingChoice = marketing === true ? 'Yes' : 'No';
 
     const sheets = await getSheets();
 
     await sheets.spreadsheets.values.append({
       spreadsheetId: SPREADSHEET_ID,
-      range: `'${config.sheetName}'!A:E`,
+      range: `'${config.sheetName}'!A:F`,
       valueInputOption: 'USER_ENTERED',
       requestBody: {
         values: [[
@@ -118,7 +141,8 @@ app.post('/api/register', async (req, res) => {
           device,
           registeredAt,
           expires,
-          'Active'
+          'Active',
+          marketingChoice
         ]]
       }
     });
@@ -153,4 +177,6 @@ app.get('/api/properties', (req, res) => {
   });
 });
 
-app.listen(PORT, () => console.log(`WiFi registration server listening on port ${PORT}`));
+app.listen(PORT, () => {
+  console.log(`WiFi registration server listening on port ${PORT}`);
+});
