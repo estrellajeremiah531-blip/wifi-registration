@@ -3,10 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guest WiFi Registration | LIT Property</title>
 
-<title>Apartment WiFi Registration</title>
-
-<!-- Website icon -->
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="apple-touch-icon" href="favicon.svg">
 
@@ -18,29 +16,37 @@
     font-family:Inter,Arial,sans-serif;
     background:linear-gradient(135deg,#eef6ff,#f7f4ff);
     color:#172033;
-    min-height:100vh
+    min-height:100vh;
   }
 
   .wrap{
     max-width:720px;
     margin:auto;
-    padding:32px 18px
+    padding:32px 18px;
   }
 
   .card{
     background:#fff;
     border-radius:24px;
     padding:30px;
-    box-shadow:0 15px 45px rgba(30,50,90,.12)
+    box-shadow:0 15px 45px rgba(30,50,90,.12);
+  }
+
+  .brand{
+    display:block;
+    width:min(100%,430px);
+    height:auto;
+    margin:0 auto 24px;
   }
 
   h1{
     margin:0 0 8px;
-    font-size:30px
+    font-size:30px;
+    line-height:1.15;
   }
 
   .muted{
-    color:#687386
+    color:#687386;
   }
 
   .badge{
@@ -51,13 +57,13 @@
     color:#3565c8;
     font-weight:700;
     font-size:13px;
-    margin-bottom:16px
+    margin-bottom:16px;
   }
 
   label{
     display:block;
     font-weight:700;
-    margin:18px 0 7px
+    margin:18px 0 7px;
   }
 
   input,select{
@@ -65,7 +71,70 @@
     padding:14px;
     border:1px solid #d8deea;
     border-radius:12px;
-    font-size:16px
+    font-size:16px;
+    background:#fff;
+    color:#172033;
+  }
+
+  select{
+    cursor:pointer;
+  }
+
+  input:focus,select:focus{
+    outline:2px solid rgba(47,111,237,.18);
+    border-color:#2f6fed;
+  }
+
+  .info-box{
+    margin-top:18px;
+    padding:14px 16px;
+    border-radius:12px;
+    background:#f4f8ff;
+    border:1px solid #dbe8ff;
+    color:#53647f;
+    font-size:13px;
+    line-height:1.55;
+  }
+
+  .info-box a{
+    color:#2f6fed;
+    font-weight:700;
+  }
+
+  .marketing-box{
+    margin-top:14px;
+    padding:14px 16px;
+    border-radius:12px;
+    background:#fff9ec;
+    border:1px solid #f6e5b9;
+  }
+
+  .marketing-label{
+    display:flex;
+    align-items:flex-start;
+    gap:10px;
+    margin:0;
+    cursor:pointer;
+  }
+
+  .marketing-label input{
+    width:18px;
+    height:18px;
+    margin:2px 0 0;
+    padding:0;
+    flex:0 0 auto;
+    cursor:pointer;
+  }
+
+  .marketing-title{
+    font-weight:800;
+  }
+
+  .marketing-note{
+    margin:7px 0 0 28px;
+    color:#687386;
+    font-size:13px;
+    line-height:1.5;
   }
 
   button{
@@ -78,11 +147,16 @@
     color:white;
     font-size:16px;
     font-weight:800;
-    cursor:pointer
+    cursor:pointer;
+  }
+
+  button:hover{
+    filter:brightness(.97);
   }
 
   button:disabled{
-    opacity:.6
+    opacity:.6;
+    cursor:default;
   }
 
   .error{
@@ -91,108 +165,64 @@
     padding:12px;
     border-radius:10px;
     margin-top:15px;
-    display:none
+    display:none;
   }
 
   .success{
-    display:none
+    display:none;
   }
 
   .credentials{
     margin-top:20px;
     background:#f4f8ff;
     border-radius:16px;
-    padding:20px
+    padding:20px;
   }
 
   .cred{
     font-size:20px;
     font-weight:800;
     margin:8px 0;
-    word-break:break-word
+    word-break:break-word;
   }
 
   .small{
-    font-size:13px
+    font-size:13px;
   }
 
   .footer{
-    margin-top:18px;
+    margin-top:24px;
+    padding-top:18px;
+    border-top:1px solid #edf0f5;
     text-align:center;
     color:#778096;
-    font-size:13px
-  }
-
-  .privacy-box{
-    margin-top:18px;
-    padding:15px;
-    background:#f8faff;
-    border:1px solid #e2e8f3;
-    border-radius:14px
-  }
-
-  .privacy-box p{
-    margin:0;
     font-size:13px;
-    line-height:1.55;
-    color:#687386
   }
 
-  .privacy-link{
+  .footer a{
     color:#2f6fed;
+    text-decoration:none;
     font-weight:700;
-    text-decoration:none
   }
 
-  .privacy-link:hover{
-    text-decoration:underline
-  }
+  @media (max-width:520px){
+    .wrap{
+      padding:20px 12px;
+    }
 
-  .marketing-box{
-    margin-top:18px;
-    padding:16px;
-    background:#fafbfe;
-    border:1px solid #e0e5ef;
-    border-radius:14px
-  }
+    .card{
+      padding:22px 18px;
+      border-radius:20px;
+    }
 
-  .marketing-label{
-    display:flex;
-    align-items:flex-start;
-    gap:11px;
-    margin:0;
-    font-weight:400;
-    cursor:pointer
-  }
+    .brand{
+      width:min(100%,360px);
+      margin-bottom:20px;
+    }
 
-  .marketing-label input{
-    width:18px;
-    height:18px;
-    margin:2px 0 0;
-    flex:none
-  }
-
-  .marketing-title{
-    font-weight:700;
-    color:#172033
-  }
-
-  .marketing-note{
-    margin:7px 0 0 29px;
-    font-size:12px;
-    line-height:1.5;
-    color:#687386
-  }
-
-  .qr{
-    display:none;
-    text-align:center;
-    margin-top:24px
-  }
-
-  .qr img{
-    max-width:220px;
-    border-radius:12px
+    h1{
+      font-size:27px;
+    }
   }
 </style>
 </head>
@@ -202,12 +232,18 @@
 <div class="wrap">
   <div class="card">
 
+    <img
+      class="brand"
+      src="logo.png"
+      alt="LIT Property"
+    >
+
     <div class="badge">Apartment WiFi</div>
 
     <h1>Register for WiFi</h1>
 
     <p class="muted">
-      Enter your email before receiving the WiFi credentials.
+      Enter your email to receive your complimentary WiFi credentials.
     </p>
 
     <form id="form">
@@ -234,42 +270,41 @@
         type="email"
         required
         placeholder="you@example.com"
-        autocomplete="email"
       >
 
-      <div class="privacy-box">
-        <p>
-          Your email address is required to access our complimentary guest
-          WiFi. We collect this information to maintain a record of guest
-          WiFi access and to help monitor the security and appropriate use
-          of our network. Your information is handled in accordance with
-          our <a class="privacy-link" href="privacy.html">Privacy Notice</a>.
-        </p>
+      <div class="info-box">
+        Your email address is required to receive access to our complimentary guest WiFi.
+        We collect this information to maintain a record of guest WiFi access and to help
+        monitor the security and appropriate use of our network. Your information is handled
+        in accordance with our
+        <a href="privacy.html">Privacy Notice</a>.
       </div>
 
-     <div class="marketing-box">
+      <div class="marketing-box">
 
-  <label class="marketing-label">
-    <input
-      id="marketing"
-      type="checkbox"
-    >
+        <label class="marketing-label">
 
-    <span>
-      <span class="marketing-title">
-        Planning another stay with us?
-      </span>
-    </span>
-  </label>
+          <input
+            id="marketing"
+            type="checkbox"
+          >
 
-  <p class="marketing-note">
-    Yes — email me when I can book my next stay directly with you.
-    We'll occasionally email you about availability and
-    direct-booking rates. You can unsubscribe at any time.
-    This is optional and isn't required for WiFi access.
-  </p>
+          <span>
+            <span class="marketing-title">
+              Planning another stay with us?
+            </span>
+          </span>
 
-</div>
+        </label>
+
+        <p class="marketing-note">
+          Yes — email me when I can book my next stay directly with you.
+          We'll occasionally email you about availability and direct-booking rates.
+          You can unsubscribe at any time. This is optional and isn't required for WiFi access.
+        </p>
+
+      </div>
+
       <label for="device">
         Device name
       </label>
@@ -319,15 +354,9 @@
 
     </div>
 
-    <div class="qr" id="qr">
-      <p class="muted">Share this portal</p>
-      <img id="qrImg" alt="QR code">
-    </div>
-
     <div class="footer">
-      WiFi Registration Portal
-      <br>
-      <a class="privacy-link" href="privacy.html">Privacy Notice</a>
+      WiFi Registration Portal ·
+      <a href="privacy.html">Privacy Notice</a>
     </div>
 
   </div>
@@ -416,7 +445,6 @@ document.getElementById('form').addEventListener('submit', async (e) => {
   } catch (err) {
 
     error.textContent = err.message;
-
     error.style.display = 'block';
 
   } finally {
